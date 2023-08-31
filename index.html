@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calorie Calculator</title>
+</head>
+<body>
+    <header>
+        <img src="<a href="https://imgur.com/K2pY4rF"><img src="https://i.imgur.com/K2pY4rF.png" title="source: imgur.com" /></a>"
+        <h1>Calorie Calculator</h1>
+    </header>
+
+    <label for="weight">Weight (kg):</label>
+    <input type="number" id="weight"><br><br>
+    <label for="height">Height (cm):</label>
+    <input type="number" id="height"><br><br>
+    <label for="activity">Activity Level:</label>
+    <select id="activity">
+        <option value="sedentary">Sedentary</option>
+        <option value="lightly-active">Lightly Active</option>
+        <option value="moderately-active">Moderately Active</option>
+        <option value="very-active">Very Active</option>
+    </select><br><br>
+    <label for="goalPreference">Goal Preference:</label>
+    <select id="goalPreference">
+        <option value="lose-fat">Lose Fat</option>
+        <option value="increase-muscle">Increase Muscle Mass</option>
+        <option value="maintain">Maintain</option>
+    </select><br><br>
+    <label for="macroPreference">Macro Preference:</label>
+    <select id="macroPreference">
+        <option value="balanced">Balanced</option>
+        <option value="higher-protein">Higher Protein</option>
+        <option value="higher-carbs">Higher Carbs</option>
+        <option value="higher-fat">Higher Fat</option>
+    </select><br><br>
+    <button onclick="calculateCalories()">Calculate Calories</button>
+    <p id="calorieResult"></p>
+    <p id="goalAndMacroBreakdown"></p>
+
+    <script>
+        function calculateCalories() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const activity = document.getElementById('activity').value;
+            const goalPreference = document.getElementById('goalPreference').value;
+            const macroPreference = document.getElementById('macroPreference').value;
+
+            let calories = 10 * weight + 6.25 * height;
+
+            switch (activity) {
+                case 'sedentary':
+                    calories *= 1.2;
+                    break;
+                case 'lightly-active':
+                    calories *= 1.375;
+                    break;
+                case 'moderately-active':
+                    calories *= 1.55;
+                    break;
+                case 'very-active':
+                    calories *= 1.725;
+                    break;
+            }
+
+            if (goalPreference === 'lose-fat') {
+                calories *= 0.85;
+            } else if (goalPreference === 'increase-muscle') {
+                calories *= 1.1;
+            }
+
+            let protein = (weight * 2.2).toFixed(2);
+            let fat = (calories * 0.25 / 9).toFixed(2);
+            let carbs = ((calories - (protein * 4 + fat * 9)) / 4).toFixed(2);
+
+            if (macroPreference === 'higher-protein') {
+                protein = (weight * 2.5).toFixed(2);
+                carbs = ((calories - (protein * 4 + fat * 9)) / 4).toFixed(2);
+            } else if (macroPreference === 'higher-carbs') {
+                carbs = ((calories * 0.6) / 4).toFixed(2);
+                protein = ((calories * 0.25) / 4).toFixed(2);
+                fat = ((calories - (protein * 4 + carbs * 4)) / 9).toFixed(2);
+            } else if (macroPreference === 'higher-fat') {
+                fat = ((calories * 0.35) / 9).toFixed(2);
+                protein = ((calories * 0.25) / 4).toFixed(2);
+                carbs = ((calories - (protein * 4 + fat * 9)) / 4).toFixed(2);
+            }
+
+            let goalText = '';
+            if (goalPreference === 'lose-fat') {
+                goalText = 'Lose Fat';
+            } else if (goalPreference === 'increase-muscle') {
+                goalText = 'Increase Muscle Mass';
+            } else if (goalPreference === 'maintain') {
+                goalText = 'Maintain';
+            }
+
+            document.getElementById('calorieResult').textContent = `Estimated daily calories for ${goalText}: ${calories.toFixed(2)}`;
+            document.getElementById('goalAndMacroBreakdown').textContent = `Goal: ${goalText} | Macro Breakdown: Protein ${protein}g | Fat ${fat}g | Carbs ${carbs}g`;
+        }
+    </script>
+</body>
+</html>
